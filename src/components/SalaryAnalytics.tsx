@@ -70,7 +70,7 @@ function parseSalaryValue(salaryStr: string): { midpoint: number; low: number; h
 }
 
 export default function SalaryAnalytics({ applications, jobs, profile }: SalaryAnalyticsProps) {
-  const [activeChartTab, setActiveChartTab] = useState<'spectrum' | 'correlation' | 'breakdown'>('spectrum');
+  const [activeChartTab, setActiveChartTab] = useState<'spectrum' | 'correlation' | 'breakdown' | 'pipeline'>('spectrum');
 
   // Convert Profile Target Salary to parsed number (Default to $105,000 if not filled)
   const targetSalaryValue = useMemo(() => {
@@ -178,6 +178,32 @@ export default function SalaryAnalytics({ applications, jobs, profile }: SalaryA
     return [...analyticsData].sort((a, b) => a.matchScore - b.matchScore);
   }, [analyticsData]);
 
+  // Aggregate application status distribution for pipeline stats
+  const pipelineData = useMemo(() => {
+    const counts = {
+      applied: 0,
+      interviewing: 0,
+      offered: 0,
+      rejected: 0,
+    };
+
+    applications.forEach(app => {
+      const status = (app.status || 'applied').toLowerCase();
+      if (status in counts) {
+        counts[status as keyof typeof counts]++;
+      } else {
+        counts.applied++;
+      }
+    });
+
+    return [
+      { name: 'Applied', value: counts.applied, key: 'applied', fill: '#3b82f6' },       // vibrant blue
+      { name: 'Interviewing', value: counts.interviewing, key: 'interviewing', fill: '#f59e0b' }, // warning amber
+      { name: 'Offered', value: counts.offered, key: 'offered', fill: '#10b981' },         // emerald green
+      { name: 'Rejected', value: counts.rejected, key: 'rejected', fill: '#f43f5e' },       // rose red
+    ];
+  }, [applications]);
+
   const currencyFormatter = (value: number) => {
     return `$${(value / 1000).toFixed(0)}k`;
   };
@@ -229,6 +255,16 @@ export default function SalaryAnalytics({ applications, jobs, profile }: SalaryA
             }`}
           >
             Role Type Rates
+          </button>
+          <button
+            onClick={() => setActiveChartTab('pipeline')}
+            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer ${
+              activeChartTab === 'pipeline' 
+                ? 'bg-white text-zinc-900 shadow-xs' 
+                : 'text-zinc-500 hover:text-zinc-900'
+            }`}
+          >
+            Pipeline Status
           </button>
         </div>
       </div>
@@ -401,7 +437,7 @@ export default function SalaryAnalytics({ applications, jobs, profile }: SalaryA
                   dot={{ r: 4, stroke: '#6366f1', strokeWidth: 2, fill: '#fff' }}
                 />
               </LineChart>
-            ) : (
+            ) : activeChartTab === 'breakdown' ? (
               // CHART 3: ROLE TYPE AVERAGE RATES (PIE CHART OR RADIAL REPRESENTATION / COMPACT BAR FOR ROLES)
               <BarChart
                 data={salaryByJobType}
@@ -450,6 +486,72 @@ export default function SalaryAnalytics({ applications, jobs, profile }: SalaryA
                   ))}
                 </Bar>
               </BarChart>
+            ) : (
+              // CHART 4: PIPELINE STATUS DISTRIBUTION (PIE CHART)
+              <div className="flex flex-col sm:flex-row items-center justify-center h-full gap-8 font-sans">
+                <div className="w-[180px] h-[180px] shrink-0 relative flex items-center justify-center">
+                  <div className="absolute inset-0">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={pipelineData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={50}
+                          outerRadius={75}
+                          paddingAngle={3}
+                          dataKey="value"
+                        >
+                          {pipelineData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                          ))}
+                        </Pie>
+                        <Tooltip
+                          content={({ active, payload }) => {
+                            if (active && payload && payload.length) {
+                              const data = payload[0].payload;
+                              return (
+                                <div className="bg-zinc-900 border border-zinc-800 p-2 rounded-lg text-white font-sans text-xs">
+                                  <span className="font-bold">{data.name}: </span>
+                                  <span className="font-mono text-indigo-300 font-bold">{data.value}</span>
+                                </div>
+                              );
+                            }
+                            return null;
+                          }}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                  {/* Absolute Center Count Overlay */}
+                  <div className="text-center pointer-events-none z-10 p-2">
+                    <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest block leading-none">Total</span>
+                    <span className="text-xl font-extrabold text-zinc-900 leading-none mt-1 inline-block">{applications.length}</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2.5 max-w-sm w-full">
+                  {pipelineData.map((entry) => {
+                    const total = applications.length || 1;
+                    const percent = (entry.value / total) * 100;
+                    const formattedPercent = percent % 1 === 0 ? percent.toFixed(0) : percent.toFixed(1);
+                    return (
+                      <div key={entry.key} className="bg-zinc-50 border border-zinc-150 rounded-xl p-2.5 flex items-center justify-between">
+                        <div className="flex items-center space-x-2 shrink-0">
+                          <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: entry.fill }} />
+                          <div>
+                            <span className="block text-[9px] font-bold text-zinc-400 uppercase tracking-tight leading-none">{entry.name}</span>
+                            <span className="text-xs font-extrabold text-zinc-800 leading-none mt-1 inline-block">{entry.value}</span>
+                          </div>
+                        </div>
+                        <span className="text-[9px] font-mono font-bold bg-white border border-zinc-200 px-1.5 py-0.5 rounded text-zinc-600 leading-none self-center shrink-0">
+                          {formattedPercent}%
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             )}
           </ResponsiveContainer>
         )}
