@@ -1,6 +1,6 @@
 {
-  "name": "",
-  "description": "",
+  "name": "AI Job Finder & Resume Optimizer",
+  "description": "An interactive AI job portal that takes your skills, finds relevant local opportunities, optimizes your resume for specific positions, and automates applications with tailored cover letters and screening questions.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
