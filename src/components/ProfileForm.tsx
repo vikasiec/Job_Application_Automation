@@ -168,7 +168,7 @@ export default function ProfileForm({ profile, onSave }: ProfileFormProps) {
                 name="salaryExpectation"
                 value={formData.salaryExpectation || ''}
                 onChange={handleTextChange}
-                placeholder="e.g. $110,000"
+                placeholder="e.g. 15 LPA or ₹15,00,050"
                 className="w-full rounded-lg border border-zinc-200 py-2.5 px-3 text-sm focus:border-indigo-500 focus:outline-none"
               />
             </div>

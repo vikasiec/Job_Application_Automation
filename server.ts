@@ -31,16 +31,16 @@ const ai = getGeminiClient();
 
 // MOCK FALLBACK DATA (in case GEMINI_API_KEY is not set)
 const mockJobs = (city: string, title: string): any[] => {
-  const cleanCity = city || "New York";
-  const cleanTitle = title || "Software Engineer";
+  const cleanCity = city || "Bengaluru, Karnataka";
+  const cleanTitle = title || "React Front-End Engineer";
   return [
     {
       id: "mock-1",
       title: `Senior ${cleanTitle}`,
-      company: "InnovateTech Corp",
+      company: "InnovateTech Bengaluru",
       location: `${cleanCity}`,
-      salary: "$120,000 - $150,000",
-      description: `We are seeking a senior teammate to lead our customer experience platforms. You will work on scalable system architecture, mentor junior developers, and coordinate with product owners to deliver stunning user experiences.`,
+      salary: "18 LPA - 24 LPA",
+      description: `We are seeking a senior teammate to lead our client-facing initiatives. You will work on scalable system architecture, mentor junior developers, and coordinate with product owners to deliver stunning user experiences.`,
       type: "Full-time",
       skillsRequired: ["React", "TypeScript", "Node.js", "System Design", "Cloud Infrastructure"],
       matchScore: 85,
@@ -51,9 +51,9 @@ const mockJobs = (city: string, title: string): any[] => {
     {
       id: "mock-2",
       title: `${cleanTitle} (Mid-Level)`,
-      company: "NextGen Solutions",
+      company: "DevSols India",
       location: `${cleanCity}`,
-      salary: "$95,000 - $115,000",
+      salary: "12 LPA - 16 LPA",
       description: `Join an agile, dynamic software development squad creating next-generation analytical panels. Excellent culture, with focus on automated testing, clean code, and fast-paced agile iterations.`,
       type: "Full-time",
       skillsRequired: ["React", "Tailwind CSS", "RESTful APIs", "Git", "Jest"],
@@ -65,9 +65,9 @@ const mockJobs = (city: string, title: string): any[] => {
     {
       id: "mock-3",
       title: `Contract ${cleanTitle} Specialist`,
-      company: "Apex Tech Consulting",
+      company: "Apex Tech Labs",
       location: `${cleanCity}`,
-      salary: "$80 - $110 / hr",
+      salary: "14 LPA - 18 LPA",
       description: `Looking for a fast execution consultant to port custom internal dashboards over to modern component structures. Must be comfortable stepping in to existing codebases and converting fast.`,
       type: "Contract",
       skillsRequired: ["React", "TypeScript", "Tailwind CSS", "Figma integration"],

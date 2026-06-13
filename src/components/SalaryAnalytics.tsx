@@ -16,7 +16,7 @@ import {
   PieChart,
   Pie
 } from 'recharts';
-import { TrendingUp, DollarSign, Target, Award, Layers, Calculator, Info } from 'lucide-react';
+import { TrendingUp, IndianRupee, Target, Award, Layers, Calculator, Info } from 'lucide-react';
 import { motion } from 'motion/react';
 
 interface SalaryAnalyticsProps {
@@ -25,22 +25,28 @@ interface SalaryAnalyticsProps {
   profile: Profile;
 }
 
-// Robust custom salary parser to handle "$120,000 - $150,000", "$80 - $110 / hr", "75k", etc.
+// Robust custom salary parser to handle "18 LPA", "12.5 LPA", "₹15,00,000", "$120,000", "/ hr", etc.
 function parseSalaryValue(salaryStr: string): { midpoint: number; low: number; high: number; isHourly: boolean } {
   if (!salaryStr) return { midpoint: 0, low: 0, high: 0, isHourly: false };
   const clean = salaryStr.toLowerCase();
   
   // Check if hourly
   const isHourly = clean.includes('/hr') || clean.includes('hr') || clean.includes('hour') || clean.includes('/ hr');
+  // Check if Lakhs (LPA, Lakh, Lac)
+  const isLpa = clean.includes('lpa') || clean.includes('lakh') || clean.includes('lac') || clean.includes('l');
   
-  // Extract all numbers
-  const numbers = clean.replace(/,/g, '').match(/\d+/g);
+  // Extract all numbers (including decimal points like 12.5)
+  const numbers = clean.replace(/,/g, '').match(/\d+(\.\d+)?/g);
   if (!numbers || numbers.length === 0) return { midpoint: 0, low: 0, high: 0, isHourly: false };
   
   const parsed = numbers.map(n => {
-    let val = parseInt(n, 10);
-    // If written as "120k" or similar but we parsed just "120"
-    if (val < 1000 && !isHourly && (clean.includes(`${val}k`) || clean.includes(`${val} k`))) {
+    let val = parseFloat(n);
+    if (isLpa) {
+      val *= 100000;
+    } else if (val < 100 && !isHourly) {
+      // If a small number like "15" or "18" is supplied in India context, represent as Lakhs
+      val *= 100000;
+    } else if (val < 1000 && !isHourly && (clean.includes(`${val}k`) || clean.includes(`${val} k`))) {
       val *= 1000;
     }
     return val;
@@ -48,11 +54,11 @@ function parseSalaryValue(salaryStr: string): { midpoint: number; low: number; h
   
   let low = parsed[0];
   let high = parsed.length > 1 ? parsed[1] : low;
-
-  // If small numbers like "85" but not hourly and not thousands, assume thousands
+ 
+  // If small numbers parsed but not hourly and not thousands, treat as Lakhs
   if (low < 1000 && !isHourly) {
-    low *= 1000;
-    high *= 1000;
+    low *= 100000;
+    high *= 100000;
   }
   
   // If hourly, convert to annual (2000 working hours)
@@ -72,10 +78,10 @@ function parseSalaryValue(salaryStr: string): { midpoint: number; low: number; h
 export default function SalaryAnalytics({ applications, jobs, profile }: SalaryAnalyticsProps) {
   const [activeChartTab, setActiveChartTab] = useState<'spectrum' | 'correlation' | 'breakdown' | 'pipeline'>('spectrum');
 
-  // Convert Profile Target Salary to parsed number (Default to $105,000 if not filled)
+  // Convert Profile Target Salary to parsed number (Default to 15 LPA if not filled)
   const targetSalaryValue = useMemo(() => {
-    const parsed = parseSalaryValue(profile.salaryExpectation || "$105,000");
-    return parsed.midpoint || 105000;
+    const parsed = parseSalaryValue(profile.salaryExpectation || "15 LPA");
+    return parsed.midpoint || 1500000;
   }, [profile.salaryExpectation]);
 
   // Merge applicant data and scanned job vacancies to provide a richer analysis pool
@@ -89,7 +95,7 @@ export default function SalaryAnalytics({ applications, jobs, profile }: SalaryA
       poolMap.set(`${app.company}-${app.jobTitle}`, {
         company: app.company,
         title: app.jobTitle,
-        salaryStr: matchingJob?.salary || "$110,000", // Fallback standard representation
+        salaryStr: matchingJob?.salary || "14 LPA", // Fallback standard representation
         matchScore: matchingJob?.matchScore || 85,
         source: 'applied',
         jobType: matchingJob?.type || 'Full-time'
@@ -205,11 +211,19 @@ export default function SalaryAnalytics({ applications, jobs, profile }: SalaryA
   }, [applications]);
 
   const currencyFormatter = (value: number) => {
-    return `$${(value / 1000).toFixed(0)}k`;
+    if (value >= 100000) {
+      const lpa = value / 100000;
+      return `${lpa % 1 === 0 ? lpa.toFixed(0) : lpa.toFixed(1)} LPA`;
+    }
+    return `₹${(value / 1000).toFixed(0)}k`;
   };
 
   const fullCurrencyFormatter = (value: number) => {
-    return `$${value.toLocaleString()}`;
+    return value.toLocaleString('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0
+    });
   };
 
   return (
@@ -272,8 +286,8 @@ export default function SalaryAnalytics({ applications, jobs, profile }: SalaryA
       {/* Summary insights grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-100 flex flex-col justify-between">
-          <span className="text-[10px] uppercase font-mono font-bold text-zinc-400 flex items-center space-x-1">
-            <DollarSign className="h-3 w-3 text-indigo-500" />
+          <span className="text-zinc-500 text-[10px] uppercase font-mono font-bold flex items-center space-x-1">
+            <IndianRupee className="h-3 w-3 text-indigo-500" />
             <span>Average Midpoint</span>
           </span>
           <span className="text-lg font-extrabold text-zinc-900 mt-1">{fullCurrencyFormatter(stats.avg || 0)}</span>
@@ -294,7 +308,7 @@ export default function SalaryAnalytics({ applications, jobs, profile }: SalaryA
             <Award className="h-3 w-3 text-pink-500" />
             <span>Max Compensation</span>
           </span>
-          <span className="text-lg font-extrabold text-zinc-900 mt-1">{stats.high > 0 ? fullCurrencyFormatter(stats.high) : '$0'}</span>
+          <span className="text-lg font-extrabold text-zinc-900 mt-1">{stats.high > 0 ? fullCurrencyFormatter(stats.high) : '₹0'}</span>
           <span className="text-[9px] text-zinc-400 mt-0.5">Top regional scope discovered</span>
         </div>
 

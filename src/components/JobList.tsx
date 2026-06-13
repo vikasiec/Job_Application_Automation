@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Job, Profile } from '../types';
-import { Search, MapPin, DollarSign, Briefcase, ChevronRight, CheckCircle, AlertOctagon, RefreshCw, FileCheck } from 'lucide-react';
+import { Search, MapPin, IndianRupee, Briefcase, ChevronRight, CheckCircle, AlertOctagon, RefreshCw, FileCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface JobListProps {
@@ -148,8 +148,8 @@ export default function JobList({ jobs, onSelectJob, onSearch, loading, profile 
                         <MapPin className="h-3 w-3" />
                         <span>{job.location}</span>
                       </span>
-                      <span className="flex items-center space-x-1">
-                        <DollarSign className="h-3 w-3" />
+                      <span className="flex items-center space-x-1 font-sans font-bold text-zinc-600">
+                        <IndianRupee className="h-3 w-3 shrink-0" />
                         <span>{job.salary}</span>
                       </span>
                     </div>
@@ -195,7 +195,7 @@ export default function JobList({ jobs, onSelectJob, onSearch, loading, profile 
                   <div className="p-3 bg-zinc-50 border border-zinc-100 rounded-lg">
                     <span className="block text-[10px] font-mono text-zinc-400 uppercase font-semibold">Compensation Range</span>
                     <span className="text-xs font-bold text-zinc-800 flex items-center mt-1">
-                      <DollarSign className="h-3 w-3 text-emerald-500 mr-0.5 shrink-0" />
+                      <IndianRupee className="h-3 w-3 text-emerald-600 mr-0.5 shrink-0" />
                       {selectedLocalJob.salary}
                     </span>
                   </div>

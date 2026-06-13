@@ -16,7 +16,7 @@ import {
   Trash2, 
   TrendingDown, 
   MapPin, 
-  DollarSign, 
+  IndianRupee, 
   ArrowUpRight 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -25,14 +25,14 @@ import { motion, AnimatePresence } from 'motion/react';
 const DEFAULT_PROFILE: Profile = {
   name: "Vikas Kumar",
   email: "vikas.iec@gmail.com",
-  phone: "+1 (312) 555-0143",
+  phone: "+91 98123 45678",
   currentTitle: "React Front-End Engineer",
-  city: "Chicago, IL",
+  city: "Bengaluru, Karnataka",
   skills: ["React", "TypeScript", "Tailwind CSS", "RESTful APIs", "Node.js", "Git", "Jest"],
   experience: "Junior to Mid frontend developer with 3 years of hands-on experience in Single Page Applications. Adopts comprehensive type structures with TypeScript, manages agile sprint boards, and builds responsive components styled using Tailwind classes.",
-  rawResume: "VIKAS KUMAR\nvikas.iec@gmail.com | Chicago, IL\n\nPROFESSIONAL SUMMARY\nHighly competent React Front-End developer specializing in structuring user-centric interfaces. Proficient at web scalability, state optimization, and working alongside developers to resolve complex layouts.\n\nTECHNICAL STACK\nReact, TypeScript, Tailwind CSS, REST APIs, JSON validation, Git repositories.\n\nEXPERIENCE\n- React Specialist at Midwest Web Labs (2023 - Present)\n  Re-engineered key dashboard components using React 18, enhancing mobile page responsiveness.\n  Handled interface integration with backend API controllers.\n- Junior Frontend Associate at DevSols LLC (2022 - 2023)\n  Built custom styled web catalogs, adopting rigorous corporate wireframes.",
+  rawResume: "VIKAS KUMAR\nvikas.iec@gmail.com | Bengaluru, Karnataka\n\nPROFESSIONAL SUMMARY\nHighly competent React Front-End developer specializing in structuring user-centric interfaces. Proficient at web scalability, state optimization, and working alongside developers to resolve complex layouts.\n\nTECHNICAL STACK\nReact, TypeScript, Tailwind CSS, REST APIs, JSON validation, Git repositories.\n\nEXPERIENCE\n- React Specialist at Bengaluru Tech Labs (2023 - Present)\n  Re-engineered key dashboard components using React 18, enhancing mobile page responsiveness.\n  Handled interface integration with backend API controllers.\n- Junior Frontend Associate at DevSols India (2022 - 2023)\n  Built custom styled web catalogs, adopting rigorous corporate wireframes.",
   portfolioUrl: "https://github.com/vikas-kumar-dev",
-  salaryExpectation: "$105,000"
+  salaryExpectation: "18 LPA"
 };
 
 // INITIAL MOCK APPLICATIONS
@@ -41,8 +41,8 @@ const DEFAULT_APPLICATIONS = (city: string): Application[] => [
     id: "app-hist-1",
     jobId: "mock-hist-1",
     jobTitle: "Senior Web Developer",
-    company: "Apex Global Dynamics",
-    city: city || "Chicago, IL",
+    company: "Apex India Group",
+    city: city || "Bengaluru, India",
     appliedDate: "Jun 10, 2026",
     status: "interviewing",
     optimizedSummary: "Experienced Web Specialist focused on high-performance frameworks.",
@@ -56,7 +56,7 @@ const DEFAULT_APPLICATIONS = (city: string): Application[] => [
     jobId: "mock-hist-2",
     jobTitle: "React Frontend Practitioner",
     company: "HyperScale Tech Solutions",
-    city: "Remote (USA)",
+    city: "Remote (India)",
     appliedDate: "Jun 11, 2026",
     status: "applied",
     optimizedSummary: "Specialized front-end engineer adopting strict Tailwind and TypeScript models.",
