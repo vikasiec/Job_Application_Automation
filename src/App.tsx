@@ -4,6 +4,7 @@ import ProfileForm from './components/ProfileForm';
 import JobList from './components/JobList';
 import ApplyWizard from './components/ApplyWizard';
 import InterviewCoach from './components/InterviewCoach';
+import SalaryAnalytics from './components/SalaryAnalytics';
 import { Profile, Job, Application } from './types';
 import { 
   Briefcase, 
@@ -261,6 +262,13 @@ export default function App() {
                   AI
                 </div>
               </div>
+
+              {/* Salary Analytics and Benchmarks */}
+              <SalaryAnalytics 
+                applications={applications} 
+                jobs={jobs} 
+                profile={profile} 
+              />
 
               {/* Visual Job application boards tracker */}
               <div className="space-y-4">
